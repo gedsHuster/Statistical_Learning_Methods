@@ -30,13 +30,15 @@ def data_generate_in_circle(center, radius, num, seed=10, label=1):
 class1_x1, class1_x2, class1_y = data_generate_in_circle([1, 1], 3, 20, seed=1, label=1)  # positive
 class2_x1, class2_x2, class2_y = data_generate_in_circle([5, 5], 3, 20, seed=5, label=-1)  # negative
 # 样本集
-X1 = class1_x1 + class2_x1
-X2 = class1_x2 + class2_x2
-Y = class1_y + class2_y
+X1 = np.array(class1_x1 + class2_x1)
+X2 = np.array(class1_x2 + class2_x2)
+X = np.array([X1, X2])
+Y = np.array(class1_y + class2_y)
 # 初始化参数
 w = np.array([0, 0])
 b = 0.0
 eta = 0.2  # learning rate
+N = X.shape[1]  # test data number
 # 定义相关变量
 false_num = 0
 true_num = 0
@@ -44,12 +46,10 @@ task_over = False
 x = np.array([0, 0])  # 一个实例输入
 while not task_over:
     true_num = 0
-    for i in range(len(X1)):
-        x[0] = X1[i]
-        x[1] = X2[i]
+    for i in range(N):
         # 判断是否被误分类
-        while Y[i] * (np.dot(w, x) + b) <= 0:
-            w = w + eta * Y[i] * x
+        while Y[i] * (np.dot(w, X[:, i]) + b) <= 0:
+            w = w + eta * Y[i] * X[:, i]
             b = b + eta * Y[i]
             false_num += 1
             true_num -= 1
